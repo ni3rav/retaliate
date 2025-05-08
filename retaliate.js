@@ -29,19 +29,36 @@ function createTextElement(text) {
 }
 
 //* this function utilises the elemnt returned by the createElement function to render an actual node in the DOM
-function render(element) {
+function render(element, dom) {
+  if (element.type === "TEXT_ELEMENT") {
+    const node = document.createTextNode("");
+    node.nodeValue = element.props.nodeValue;
+    dom.appendChild(node);
+    return;
+  }
   const node = document.createElement(element.type);
-  node["className"] = element.props["className"];
 
-  //* rendering the child, here it is only a string so we are creating a textNode
-  const text = document.createTextNode("");
-  text["nodeValue"] = element.props.children[0].props.nodeValue;
+  //* filtering out all none children props and then applying them one by one with forEach loop
+  Object.keys(element.props)
+    .filter((key) => key !== "children")
+    .forEach((name) => {
+      node[name] = element.props[name];
+    });
+
+  //* recursively calling the render function for each chld and since the child is inside of the element so we are changing the dom argument and passing our parent node here
+  element.props.children.forEach((child) => render(child, node));
 
   //* now appending the child to parent and parent to the document
-  node.appendChild(text);
-  root.appendChild(node);
+  dom.appendChild(node);
 }
 
-const element = createElement("h1", { className: "skibidi" }, ["hello"]);
+const Retaliate = {
+  createElement,
+  render,
+};
+
+const element = Retaliate.createElement("h1", { className: "skibidi" }, [
+  "hello",
+]);
 console.log(element);
-render(element);
+Retaliate.render(element, root);
