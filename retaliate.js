@@ -17,6 +17,7 @@ function createElement(type, props, children) {
   };
 }
 
+//* this function handles the creation of primitive node which in our case is a string
 function createTextElement(text) {
   return {
     type: "TEXT_ELEMENT",
@@ -28,20 +29,19 @@ function createTextElement(text) {
 }
 
 //* this function utilises the elemnt returned by the createElement function to render an actual node in the DOM
-
 function render(element) {
   const node = document.createElement(element.type);
   node["className"] = element.props["className"];
 
   //* rendering the child, here it is only a string so we are creating a textNode
   const text = document.createTextNode("");
-  text["nodeValue"] = element.props["children"];
+  text["nodeValue"] = element.props.children[0].props.nodeValue;
 
   //* now appending the child to parent and parent to the document
   node.appendChild(text);
   root.appendChild(node);
 }
 
-const element = createElement("h1", { className: "skibidi" }, "hello");
+const element = createElement("h1", { className: "skibidi" }, ["hello"]);
 console.log(element);
 render(element);
