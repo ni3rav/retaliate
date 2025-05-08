@@ -10,8 +10,20 @@ function createElement(type, props, children) {
     type,
     props: {
       ...props,
-      children, //! this can be an array with multiple entries
+      children: children.map((child) =>
+        typeof child === "object" ? child : createTextElement(child)
+      ), //! this can be an array with multiple entries
     }, //! it is and object
+  };
+}
+
+function createTextElement(text) {
+  return {
+    type: "TEXT_ELEMENT",
+    props: {
+      nodeValue: text,
+      children: [],
+    },
   };
 }
 
