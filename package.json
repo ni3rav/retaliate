@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "build": "esbuild src/app.jsx --bundle --outfile=dist/bundle.js --jsx=transform",
-    "dev": "esbuild src/app.jsx --bundle --outfile=dist/bundle.js --watch --jsx=transform"
+    "server": "node server.js",
+    "dev": "concurrently \"npm run server\" \"esbuild src/app.jsx --bundle --outfile=dist/bundle.js --watch --jsx=transform\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "esbuild": "^0.25.4"
   }
 }

@@ -6,4 +6,6 @@
 ## Progress
 - [x] Implemented createElement function
 - [x] Implemented render function
-- [] Implement JSX transpilation using Babel to make it really React like
+- [x] Implement JSX transpilation using esbuild to make it really React like
+- [x] Developement server with edit support along with build and dev command
+- Refactor the recursive rendering calls to concurrent for faster updates
