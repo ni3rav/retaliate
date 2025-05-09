@@ -1,9 +1,9 @@
-function createElement(type, props, children) {
+function createElement(type, props = {}, ...children) {
   return {
     type,
     props: {
       ...props,
-      children: children.map((child) =>
+      children: children.flat().map((child) =>
         typeof child === "object" ? child : createTextElement(child)
       ),
     },
@@ -20,6 +20,13 @@ function createTextElement(text) {
   };
 }
 function render(element, dom) {
+  
+  if (typeof element.type === "function") {
+    const componentElement = element.type(element.props);
+    render(componentElement, dom);
+    return;
+  }
+
   if (element.type === "TEXT_ELEMENT") {
     const node = document.createTextNode("");
     node.nodeValue = element.props.nodeValue;
