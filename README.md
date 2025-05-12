@@ -25,7 +25,22 @@ sibling-node-sibling
         children
 ```
 
-## Problems with current implementation
+- [x] Diffing algorithm for efficiently updating dom without having to re-render whole thing,
 
-- Lacks efficient diffing i.e. re-rendering whole dom in case of changes which is not ideal, it should update only the updated part
-- Lack of state (will start with implementing `useState` and then maybe `useEffect`)
+- The flow of diffing can be visualised as follows
+
+![diffing flow](./diffing.png)
+
+- Effect tages are assigned as follows,
+
+        - If types match → "UPDATE"
+
+        - If types don’t match:
+
+                - If element exists → "PLACEMENT"
+
+                - If old fiber exists → "DELETION"
+
+## Problems with current implementation
+- Lack of state
+- Lack of side-effects
