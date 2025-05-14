@@ -94,12 +94,18 @@ function createDom(fiber) {
       ? document.createTextNode("")
       : document.createElement(fiber.type);
 
-  updateDom(dom, {}, fiber.props);
+  // Ensure we have valid props objects
+  const props = fiber.props || {};
+  updateDom(dom, {}, props);
   return dom;
 }
 
 //* updates dom node with new props and removes old ones
 function updateDom(dom, prevProps, nextProps) {
+  // Ensure we have valid props objects
+  prevProps = prevProps || {};
+  nextProps = nextProps || {};
+
   //! remove old or changed event listeners
   Object.keys(prevProps)
     .filter((key) => key.startsWith("on"))
@@ -232,7 +238,61 @@ function render(element, container) {
   requestIdleCallback(workLoop);
 }
 
+// Function to create a huge DOM tree
+const defineLargeDOMTree = (size) => {
+  const root = document.createElement("div");
+  for (let i = 0; i < size; i++) {
+    const child = document.createElement("div");
+    child.textContent = `Node ${i}`;
+    root.appendChild(child);
+  }
+  return root;
+};
+
+// Function to benchmark rendering time
+const benchmarkRendering = (size) => {
+  const start = performance.now();
+  const largeDOMTree = defineLargeDOMTree(size);
+  document.body.appendChild(largeDOMTree);
+  const end = performance.now();
+  console.log(`Rendering time for ${size} nodes: ${end - start} ms`);
+};
+
+// Function to apply large updates to the DOM tree
+const applyLargeUpdates = (root, size) => {
+  for (let i = 0; i < size; i++) {
+    const child = root.children[i];
+    if (child) {
+      child.textContent = `Updated Node ${i}`;
+    }
+  }
+};
+
+// Function to benchmark diffing and updating time
+const benchmarkDiffing = (root, size) => {
+  const start = performance.now();
+  applyLargeUpdates(root, size);
+  const end = performance.now();
+  console.log(`Diffing and updating time for ${size} nodes: ${end - start} ms`);
+};
+
+// Main function to run benchmarks
+const runBenchmarks = () => {
+  const size = 10000; // Adjust size as needed for testing
+  benchmarkRendering(size);
+
+  const root = document.body.firstChild;
+  benchmarkDiffing(root, size);
+};
+
 export const Retaliate = {
   createElement,
   render,
+};
+
+export {
+  runBenchmarks,
+  benchmarkRendering,
+  benchmarkDiffing,
+  defineLargeDOMTree,
 };

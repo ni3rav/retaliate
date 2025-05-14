@@ -4,11 +4,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retaliate JS</title>
+    <title>DOM Tree Benchmark</title>
 </head>
 
 <body id="root">
-    <script src="dist/bundle.js"></script>
+    <div id="app"></div>
+    <script type="module">
+        const { performance } = window;
+
+        // Function to create a huge DOM tree with our virtual DOM
+        function createLargeVirtualTree(size) {
+            const children = [];
+            for (let i = 0; i < size; i++) {
+                children.push({
+                    type: 'div',
+                    props: {
+                        nodeValue: `Node ${i}`,
+                        children: []
+                    }
+                });
+            }
+            return {
+                type: 'div',
+                props: {
+                    children: children
+                }
+            };
+        }
+
+        // Function to benchmark our virtual DOM rendering
+        async function benchmarkVirtualDOM(size) {
+            const start = performance.now();
+            const virtualTree = createLargeVirtualTree(size);
+            const container = document.getElementById('app');
+            await import('./retaliate.js').then(({ Retaliate }) => {
+                Retaliate.render(virtualTree, container);
+            });
+            const end = performance.now();
+            console.log(`Virtual DOM rendering time for ${size} nodes: ${end - start} ms`);
+        }
+
+        // Function to benchmark native DOM
+        function benchmarkNativeDOM(size) {
+            const start = performance.now();
+            const root = document.createElement('div');
+            for (let i = 0; i < size; i++) {
+                const child = document.createElement('div');
+                child.textContent = `Node ${i}`;
+                root.appendChild(child);
+            }
+            document.body.appendChild(root);
+            const end = performance.now();
+            console.log(`Native DOM rendering time for ${size} nodes: ${end - start} ms`);
+            return root;
+        }
+
+        // Function to benchmark native DOM updates
+        function benchmarkNativeDiffing(root, size) {
+            const start = performance.now();
+            for (let i = 0; i < size; i++) {
+                const child = root.children[i];
+                if (child) {
+                    child.textContent = `Updated Node ${i}`;
+                }
+            }
+            const end = performance.now();
+            console.log(`Native DOM update time for ${size} nodes: ${end - start} ms`);
+        }
+
+        // Function to benchmark virtual DOM updates
+        async function benchmarkVirtualDOMDiffing(size, container) {
+            const virtualTree = createLargeVirtualTree(size);
+            await import('./retaliate.js').then(({ Retaliate }) => {
+                Retaliate.render(virtualTree, container);
+            });
+
+            // Create updated tree
+            const start = performance.now();
+            const updatedTree = {
+                type: 'div',
+                props: {
+                    children: Array(size).fill(null).map((_, i) => ({
+                        type: 'div',
+                        props: {
+                            nodeValue: `Updated Node ${i}`,
+                            children: []
+                        }
+                    }))
+                }
+            };
+
+            await import('./retaliate.js').then(({ Retaliate }) => {
+                Retaliate.render(updatedTree, container);
+            });
+            const end = performance.now();
+            console.log(`Virtual DOM update time for ${size} nodes: ${end - start} ms`);
+        }
+
+        // Run the benchmarks
+        window.onload = async () => {
+            console.clear();
+            console.log('Starting benchmarks...');
+
+            // Test with different sizes, focusing on the 250-500 range
+            const sizes = [100, 250, 300, 350, 400, 450, 500, 1000];
+
+            for (const size of sizes) {
+                console.log(`\nTesting with ${size} nodes:`);
+                console.log('----------------------------------------');
+                console.log('Rendering Benchmarks:');
+
+                // Test native DOM rendering
+                const nativeRoot = benchmarkNativeDOM(size);
+
+                // Test virtual DOM rendering
+                await benchmarkVirtualDOM(size);
+
+                console.log('\nDiffing/Update Benchmarks:');
+
+                // Test native DOM updates
+                benchmarkNativeDiffing(nativeRoot, size);
+
+                // Test virtual DOM updates
+                const container = document.getElementById('app');
+                await benchmarkVirtualDOMDiffing(size, container);
+
+                // Clean up
+                document.body.removeChild(nativeRoot);
+                console.log('----------------------------------------');
+            }
+        };
+    </script>
 </body>
 
 </html>
