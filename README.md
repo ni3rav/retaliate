@@ -72,7 +72,7 @@ Future improvements will focus on implementing these features while maintaining 
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/ni3rav/retaliate
 ```
 
 2. Install dependencies:
