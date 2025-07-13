@@ -4,6 +4,7 @@ A lightweight implementation of React's core features including Virtual DOM and 
 
 ## Table of Contents
 - [Overview](#overview)
+- [View Live](#view-live)
 - [Features](#features)
 - [Architecture](#architecture)
   - [Rendering Flow](#rendering-flow)
@@ -18,6 +19,10 @@ A lightweight implementation of React's core features including Virtual DOM and 
 ## Overview
 
 RetaliateJS is my custom implementation of ReactJS, inspired by and built following [Rodrigo Pombo](https://twitter.com/pomber)'s [excellent guide](https://pomb.us/build-your-own-react/)
+
+## View Live
+
+[On stackblitz from here](https://stackblitz.com/edit/retaliate-live)
 
 ## Features
 
