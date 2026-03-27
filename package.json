@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild src/app.jsx --bundle --outfile=dist/bundle.js --jsx=transform",
+    "build": "esbuild src/demo/main.tsx --bundle --outfile=dist/bundle.js --jsx=transform",
     "server": "node server.js",
-    "dev": "concurrently \"npm run server\" \"esbuild src/app.jsx --bundle --outfile=dist/bundle.js --watch --jsx=transform\""
+    "dev": "concurrently \"npm run server\" \"esbuild src/demo/main.tsx --bundle --outfile=dist/bundle.js --watch --jsx=transform\""
   },
   "keywords": [],
   "author": "",
