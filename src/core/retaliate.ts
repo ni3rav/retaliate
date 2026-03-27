@@ -1,3 +1,5 @@
+// ? |---------------------TYPES------------------------------|
+
 //* Element can be a host tag name ("div") or a function component.
 export type ElementType = string | FunctionComponent;
 
@@ -61,6 +63,15 @@ function createElement(
   };
 }
 
+// ? |-------------- GLOBAL VARIABLE ----------------|
+//* global variables to manage fiber architecture
+let nextUnitOfWork: Fiber | null = null; //* the next unit of work
+let wipRoot: Fiber | null = null; //* work in progress root
+let currentRoot: Fiber | null = null; //* last committed root
+let deletions: Fiber[] = []; //* tracks fibers to delete
+
+// ? |------------------- FUNCTIONS ------------------------|
+
 //* handles text nodes separately
 function createTextElement(text: Child): VirtualElement {
   return {
@@ -71,12 +82,6 @@ function createTextElement(text: Child): VirtualElement {
     },
   };
 }
-
-//* global variables to manage fiber architecture
-let nextUnitOfWork: Fiber | null = null; //* the next unit of work
-let wipRoot: Fiber | null = null; //* work in progress root
-let currentRoot: Fiber | null = null; //* last committed root
-let deletions: Fiber[] = []; //* tracks fibers to delete
 
 //* creates fiber children from given virtual dom elements
 function reconcileChildren(
